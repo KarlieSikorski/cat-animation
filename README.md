@@ -11,13 +11,6 @@ The cat features:
 
 ---
 
-## 🎥 Preview
-Here’s what the animation looks like:
-
-![Kawaii Cat](kawaii_cat_paws.gif)
-
----
-
 ## 🚀 Getting Started
 
 ### 1. Clone the Repository
