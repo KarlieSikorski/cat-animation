@@ -1,0 +1,108 @@
+# Updating to keep cartoony style, add cute paws, and remove the mouth for a more simple kawaii look.
+
+frames = []
+for i in range(num_frames):
+    t = i / num_frames
+    bob = int(6 * math.sin(2 * math.pi * t * 2))
+    blink_phase = math.sin(2 * math.pi * t * 4)
+    if blink_phase > 0.85:
+        eye_open = 1.0
+    elif blink_phase < -0.6:
+        eye_open = 0.1
+    else:
+        eye_open = 0.9
+    
+    img = Image.new("RGBA", (W, H), bg)
+    draw = ImageDraw.Draw(img)
+    
+    # Shadow
+    shadow_bbox = (W//2 - 90, H//2 + 100 + bob, W//2 + 90, H//2 + 115 + bob)
+    draw.ellipse(shadow_bbox, fill=(220, 220, 220, 160))
+    
+    # Body
+    body_bbox = (W//2 - 90, H//2 - 10 + bob, W//2 + 90, H//2 + 150 + bob)
+    draw.ellipse(body_bbox, fill=cat_gray, outline=outline, width=2)
+    
+    # Head
+    head_bbox = (W//2 - 80, H//2 - 120 + bob, W//2 + 80, H//2 + 20 + bob)
+    draw.ellipse(head_bbox, fill=cat_gray, outline=outline, width=2)
+    
+    # Ears
+    draw.polygon([(W//2 - 65, H//2 - 100 + bob),
+                  (W//2 - 35, H//2 - 160 + bob),
+                  (W//2 - 5, H//2 - 100 + bob)], fill=cat_gray, outline=outline)
+    draw.polygon([(W//2 + 65, H//2 - 100 + bob),
+                  (W//2 + 35, H//2 - 160 + bob),
+                  (W//2 + 5, H//2 - 100 + bob)], fill=cat_gray, outline=outline)
+    # Inner ear
+    draw.polygon([(W//2 - 55, H//2 - 105 + bob),
+                  (W//2 - 35, H//2 - 150 + bob),
+                  (W//2 - 15, H//2 - 105 + bob)], fill=ear_pink)
+    draw.polygon([(W//2 + 55, H//2 - 105 + bob),
+                  (W//2 + 35, H//2 - 150 + bob),
+                  (W//2 + 15, H//2 - 105 + bob)], fill=ear_pink)
+    
+    # Eyes
+    eye_w = 24
+    eye_h = int(eye_w * eye_open)
+    eye_x_offset = 35
+    left_eye_center = (W//2 - eye_x_offset, H//2 - 40 + bob)
+    right_eye_center = (W//2 + eye_x_offset, H//2 - 40 + bob)
+    draw.ellipse((left_eye_center[0] - eye_w, left_eye_center[1] - eye_h,
+                  left_eye_center[0] + eye_w, left_eye_center[1] + eye_h), fill=eye_color)
+    draw.ellipse((right_eye_center[0] - eye_w, right_eye_center[1] - eye_h,
+                  right_eye_center[0] + eye_w, right_eye_center[1] + eye_h), fill=eye_color)
+    
+    # Highlights
+    if eye_open > 0.2:
+        draw.ellipse((left_eye_center[0]-8, left_eye_center[1]-eye_h+2,
+                      left_eye_center[0]-2, left_eye_center[1]-eye_h+8), fill=(255,255,255))
+        draw.ellipse((right_eye_center[0]-8, right_eye_center[1]-eye_h+2,
+                      right_eye_center[0]-2, right_eye_center[1]-eye_h+8), fill=(255,255,255))
+    
+    # Nose
+    draw.polygon([(W//2, H//2 - 10 + bob),
+                  (W//2 - 7, H//2 + 2 + bob),
+                  (W//2 + 7, H//2 + 2 + bob)], fill=(255,170,180), outline=outline)
+    
+    # Paws (front paws below body)
+    paw_radius = 20
+    draw.ellipse((W//2 - 60, H//2 + 120 + bob, W//2 - 20, H//2 + 160 + bob),
+                 fill=cat_gray, outline=outline, width=2)
+    draw.ellipse((W//2 + 20, H//2 + 120 + bob, W//2 + 60, H//2 + 160 + bob),
+                 fill=cat_gray, outline=outline, width=2)
+    
+    # Paw details (toes)
+    for offset in [-12, 0, 12]:
+        draw.line((W//2 - 40 + offset, H//2 + 130 + bob, W//2 - 40 + offset, H//2 + 160 + bob), fill=outline, width=1)
+        draw.line((W//2 + 40 + offset, H//2 + 130 + bob, W//2 + 40 + offset, H//2 + 160 + bob), fill=outline, width=1)
+    
+    # Whiskers
+    whisker_y = H//2 - 5 + bob
+    for side in [-1, 1]:
+        draw.line((W//2 + side*15, whisker_y, W//2 + side*60, whisker_y - 10), fill=outline, width=2)
+        draw.line((W//2 + side*15, whisker_y+10, W//2 + side*60, whisker_y+20), fill=outline, width=2)
+    
+    # Blush
+    draw.ellipse((W//2 - 65, H//2 - 15 + bob, W//2 - 35, H//2 + 5 + bob), fill=blush)
+    draw.ellipse((W//2 + 35, H//2 - 15 + bob, W//2 + 65, H//2 + 5 + bob), fill=blush)
+    
+    # Tail
+    tail_x = W//2 + 90
+    tail_y = H//2 + 80 + bob
+    draw.ellipse((tail_x-15, tail_y-15, tail_x+40, tail_y+40), fill=cat_gray, outline=outline, width=2)
+    
+    # Heart above head
+    heart_x = W//2
+    heart_y = H//2 - 160 + bob + int(6 * math.cos(2 * math.pi * t * 3))
+    r = 10
+    draw.ellipse((heart_x-r, heart_y-r, heart_x+r, heart_y+r), fill=(255,120,160))
+    draw.ellipse((heart_x+12-r, heart_y-r, heart_x+12+r, heart_y+r), fill=(255,120,160))
+    draw.polygon([(heart_x-r, heart_y+2), (heart_x+12+r, heart_y+2), (heart_x+6, heart_y+22)], fill=(255,120,160))
+    
+    frames.append(img.convert("P", palette=Image.ADAPTIVE))
+
+# Save updated version
+out_path3 = "/mnt/data/kawaii_cat_paws.gif"
+frames[0].save(out_path3, save_all=True, append_images=frames[1:], optimize=False, duration=80, loop=0)
+out_path3
